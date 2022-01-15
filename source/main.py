@@ -7,12 +7,13 @@ Created on Sun Dec 26 17:59:00 2021
 
 import numpy as np
 import matplotlib.pyplot as plt
-from helper import *
 from copy import copy, deepcopy
 
-inlet = Unit(type="INLET")
-column = Unit(type="COLUMN", length=3, Dax=0, ax_disc = 50)
-outlet = Unit(type="OUTLET")
+from helper import *
+from unit import Unit
+
+
+column = Unit(type="lrwop", length=3., Dax=0., ax_disc=50)
 
 
 init_sys_params = SystemParameters()
@@ -27,7 +28,7 @@ elute = deepcopy(init_sys_params)
 
 experiment = Experiment()
 experiment.system_parameters = init_sys_params
-experiment.units = [inlet, column, outlet]
+experiment.units = [column]
 experiment.add_timesection(TimeSection(system_parameters=apply, time=0.1))
 experiment.add_timesection(TimeSection(system_parameters=elute, time=1))
 experiment.run()
