@@ -13,7 +13,7 @@ from helper import *
 from unit import Unit
 
 
-column = Unit(type="lrwop", length=3., Dax=0., ax_disc=50)
+column = Unit(type="LRMP", length=3., Dax=0., ax_disc=50)
 
 
 init_sys_params = SystemParameters()

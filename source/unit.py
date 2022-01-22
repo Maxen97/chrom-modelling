@@ -9,7 +9,7 @@ import numpy as np
 
 
 class Unit:
-    def __init__ (self, type="none", length=0., Dax=0, ax_disc=1):
+    def __init__ (self, type="NONE", length=0., Dax=0, ax_disc=1):
         self.type = type
         self.length = length
         self.Dax = Dax
@@ -28,9 +28,10 @@ class Unit:
         # Concentration at unit outlet
         self.c_out = 0
         
-        
+        #test
     def step (self, c0, u, dt):
         self.c_in = c0
+        
         # Left boundary condition
         self.c[0] = self.c_in + (self.Dax / u) * (self.c[1] - self.c[0]) / self.dz
         
