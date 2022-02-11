@@ -32,7 +32,10 @@ class Experiment:
         self.t = 0
         self.dt = 0.001
         self.c = np.zeros(50)
+        self.cp = np.zeros(50)
         
+        self.t_solve = []
+        self.c_solve = []
         
     def add_timesection (self, time_section):
         self.time_sections.append((time_section.time, time_section.system_parameters))
@@ -55,11 +58,7 @@ class Experiment:
         for unit in self.units:
             unit.step(c_previous, u, self.dt)
             c_previous = unit.c_out
-        self.c = self.units[0].c
-        
-        plt.clf()
-        plt.plot(range(self.c.size), self.c)
-        plt.pause(0.01)
+        self.c = self.units[0].cl
         
         self.t += self.dt
     
@@ -69,5 +68,8 @@ class Experiment:
         
         while self.t <= total_time:
             self.step()
-            
+            self.t_solve.append(self.t)
+            self.c_solve.append(self.c[-1])
+        
+        plt.plot(self.t_solve, self.c_solve)
         plt.show()
