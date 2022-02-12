@@ -1,1 +1,3 @@
 - [ ] Fix units to SI units
+- Multiple components
+- Binding model
