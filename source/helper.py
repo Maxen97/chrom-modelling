@@ -34,6 +34,9 @@ class Experiment:
         self.c = np.zeros(50)
         self.cp = np.zeros(50)
         
+        self.components = []
+        self.components_inlet_concentrations = []
+        
         self.t_solve = []
         self.c_solve = []
         

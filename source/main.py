@@ -21,7 +21,7 @@ components = [salt, protein1, protein2]
 
 buffer1 = Solution([(salt, 50)])
 buffer2 = Solution([(salt, 1000)])
-load = Solution([(salt, 50), (protein1, 200), (protein2, 160)])
+buffer3 = Solution([(salt, 50), (protein1, 200), (protein2, 160)])
 """
 
 
