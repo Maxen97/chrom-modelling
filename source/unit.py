@@ -59,4 +59,4 @@ class Unit:
         
         
         # Update cp
-        self.cp[1:-1] = self.cp[1:-1] + 3 * self.kf / (self.ep * self.rp) * (self.cl[1:-1] - self.cp[1:-1])
+        self.cp[1:-1] = self.cp[1:-1] + (3 * self.kf / (self.ep * self.rp) * (self.cl[1:-1] - self.cp[1:-1])) * dt
