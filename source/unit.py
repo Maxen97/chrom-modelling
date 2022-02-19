@@ -15,7 +15,7 @@ class Unit:
         self.r = 0.010
         self.Dax = Dax
         self.rp = 20 * 1e-6
-        self.et = 0.85
+        self.et = 0.86
         self.ec = 0.37
         self.ep = (self.et - self.ec) / (1 - self.ec)
         
@@ -25,7 +25,7 @@ class Unit:
         
         # Discretization
         self.ax_disc = ax_disc
-        self.dz = self.length / self.ax_disc if self.ax_disc != 0. else 1.
+        self.dz = self.length / (self.ax_disc + 1)
         self.dz2 = self.dz ** 2
         
         # Concentration at nodes
@@ -45,18 +45,18 @@ class Unit:
         self.c_in = c0
         
         # Left boundary condition
-        self.cl[0] = self.c_in + (self.Dax / u) * (self.cl[1] - self.cl[0]) / self.dz
+        self.cl[0] = self.c_in + ((self.Dax / u) * (self.cl[1] - self.cl[0]) / (self.dz * 0.5)) * dt
         
         self.cl[1:-1] = self.cl[1:-1] + \
             (self.Dax * ((self.cl[2:] - 2*self.cl[1:-1] + self.cl[:-2]) / self.dz2)
-                              -  u * ((self.cl[1:-1] - self.cl[:-2]) / self.dz)) * dt - \
-                1 / self.bc * 3 * self.kf / self.rp * (self.cl[1:-1] - self.cp[1:-1])
+                              -  u * ((self.cl[1:-1] - self.cl[:-2]) / self.dz) - \
+                1 / self.bc * 3 * self.kf / self.rp * (self.cl[1:-1] - self.cp[1:-1])) * dt
         
         # Right boundary condition
-        self.cl[-1] = self.cl[-1] - (u * (self.cl[-1] - self.cl[-2]) / self.dz) * dt
+        self.cl[-1] = self.cl[-1] - (u * (self.cl[-1] - self.cl[-2]) / (self.dz * 0.5)) * dt
         
         self.c_out = self.cl[-1]
         
         
         # Update cp
-        self.cp[1:-1] = self.cp[1:-1] + (3 * self.kf / (self.ep * self.rp) * (self.cl[1:-1] - self.cp[1:-1])) * dt
+        self.cp[1:-1] = self.cp[1:-1] + (3 * self.kf / (self.ep * self.rp * 1) * (self.cl[1:-1] - self.cp[1:-1])) * dt

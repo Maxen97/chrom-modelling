@@ -11,6 +11,13 @@ import matplotlib.pyplot as plt
 from unit import Unit
 
 
+class Component:
+    def __init__ (self):
+        self.mw = 10000
+        self.ads = 1
+        self.kf = 1e-5
+        
+
 class TimeSection:
     def __init__ (self, system_parameters=None, time=0):
         self.time = time
@@ -30,9 +37,8 @@ class Experiment:
         self.time_sections = []
         self.system_parameters = None
         self.t = 0
-        self.dt = 0.001
+        self.dt = 0.01
         self.c = np.zeros(50)
-        self.cp = np.zeros(50)
         
         self.components = []
         self.components_inlet_concentrations = []

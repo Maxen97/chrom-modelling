@@ -25,7 +25,7 @@ buffer3 = Solution([(salt, 50), (protein1, 200), (protein2, 160)])
 """
 
 
-column = Unit(type="LRMP", length=0.10, Dax=0.00001, ax_disc=50)
+column = Unit(type="LRMP", length=0.30, Dax=0.0001, ax_disc=80)
 
 
 init_sys_params = SystemParameters()
@@ -41,7 +41,7 @@ elute = deepcopy(init_sys_params)
 experiment = Experiment()
 experiment.system_parameters = init_sys_params
 experiment.units = [column]
-experiment.add_timesection(TimeSection(system_parameters=apply, time=6.1))
-experiment.add_timesection(TimeSection(system_parameters=elute, time=5))
+experiment.add_timesection(TimeSection(system_parameters=apply, time=.1))
+experiment.add_timesection(TimeSection(system_parameters=elute, time=8))
 experiment.run()
 
