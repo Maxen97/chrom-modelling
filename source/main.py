@@ -22,6 +22,16 @@ components = [salt, protein1, protein2]
 buffer1 = Solution([(salt, 50)])
 buffer2 = Solution([(salt, 1000)])
 buffer3 = Solution([(salt, 50), (protein1, 200), (protein2, 160)])
+
+phase1 = Phase(inlet_solution=buffer3,
+               flowrate=2,
+               length=0.5)
+phase2 = Phase(inlet_solution=buffer1,
+               flowrate=2,
+               length=10)
+
+experiment.add_phase(phase1)
+experiment.add_phase(phase2)
 """
 
 
