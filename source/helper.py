@@ -17,68 +17,81 @@ class Component:
         self.ads = 1
         self.kf = 1e-5
         
+        
+class Solution:
+    def __init__ (self, components=[], concentrations=[]):
+        self.components = components
+        self.concentrations = concentrations
+        
 
-class TimeSection:
-    def __init__ (self, system_parameters=None, time=0):
-        self.time = time
-        self.system_parameters = system_parameters
-    
-
-class SystemParameters():
-    def __init__ (self):
-        self.u = 0
-        self.inlet_concentration = 0
+class Phase:
+    def __init__ (self, inlet_solution, flowrate, length):
+        self.inlet_solution = inlet_solution
+        self.flowrate = flowrate
+        self.length = length
     
 
 class Experiment:
     def __init__(self):
-        self.model = None
         self.units = []
-        self.time_sections = []
-        self.system_parameters = None
         self.t = 0
         self.dt = 0.01
-        self.c = np.zeros(50)
+        
+        self.phases = []
         
         self.components = []
+        
+        # Phase-specific values
+        self.f = 0
         self.components_inlet_concentrations = []
         
         self.t_solve = []
         self.c_solve = []
         
-    def add_timesection (self, time_section):
-        self.time_sections.append((time_section.time, time_section.system_parameters))
         
+    def add_phase(self, phase):
+        self.phases.append(phase)
     
-    def update_timesection(self):
-        for i in self.time_sections:
-            if self.t <= i[0]:
-                self.system_parameters = i[1]
+    def update_phases(self):
+        for phase in self.phases:
+            if self.t <= phase.length:
+                self.f = phase.flowrate
+                self.components_inlet_concentrations = phase.inlet_solution.concentrations
                 return
             
     
     def step (self):
-        self.update_timesection()
+        self.update_phases()
         
-        u = self.system_parameters.u
-        c0 = self.system_parameters.inlet_concentration
+        c0 = self.components_inlet_concentrations
         
         c_previous = c0
         for unit in self.units:
-            unit.step(c_previous, u, self.dt)
+            unit.step(c_previous, self.f, self.dt)
             c_previous = unit.c_out
-        self.c = self.units[0].cl
+        #self.c_solve.append(self.units[0].cl[:,-1])
+        self.c_solve.append(list(self.units[0].c_out))
         
         self.t += self.dt
     
     
     def run (self):
-        total_time = sum([i[0] for i in self.time_sections])
+        total_time = sum([i.length for i in self.phases])
+        self.units[0].components = self.components
         
         while self.t <= total_time:
             self.step()
             self.t_solve.append(self.t)
-            self.c_solve.append(self.c[-1])
+            #self.c_solve.append(self.c[-1])
         
-        plt.plot(self.t_solve, self.c_solve)
+        #g = np.array(self.c_solve)
+        #print(self.c_solve)
+        
+        for i in range(len(self.components)):
+            plt.plot(self.t_solve, [x[i] for x in self.c_solve])
+            
+        #plt.plot(self.t_solve, [x[0] for x in self.c_solve])
+        
+        #plt.plot(self.t_solve, self.c_solve)
+        #plt.plot(self.t_solve, self.c_solve)
         plt.show()

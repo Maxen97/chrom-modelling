@@ -19,15 +19,15 @@ protein2 = Protein()
 
 components = [salt, protein1, protein2]
 
-buffer1 = Solution([(salt, 50)])
-buffer2 = Solution([(salt, 1000)])
-buffer3 = Solution([(salt, 50), (protein1, 200), (protein2, 160)])
+buffer1 = Solution(components, [50, 0, 0])
+buffer2 = Solution(components, [1000, 0, 0])
+buffer3 = Solution(components, [50, 200, 140])
 
 phase1 = Phase(inlet_solution=buffer3,
-               flowrate=2,
+               flowrate=0.00001,
                length=0.5)
 phase2 = Phase(inlet_solution=buffer1,
-               flowrate=2,
+               flowrate=0.00001,
                length=10)
 
 experiment.add_phase(phase1)
@@ -35,9 +35,35 @@ experiment.add_phase(phase2)
 """
 
 
-column = Unit(type="LRMP", length=0.30, Dax=0.0001, ax_disc=80)
 
 
+#salt = Salt(charge=1)
+protein1 = Component()
+protein2 = Component()
+
+components = [protein1, protein2]
+
+buffer1 = Solution(components, [1.8, 0.4])
+buffer2 = Solution(components, [0., 0.])
+
+phase1 = Phase(inlet_solution=buffer1,
+               flowrate=0.00001,
+               length=0.5)
+phase2 = Phase(inlet_solution=buffer2,
+               flowrate=0.00001,
+               length=10)
+
+column = Unit(type="LRMP", length=0.30, Dax=0.0001, ax_disc=50, components=components)
+
+experiment = Experiment()
+experiment.units = [column]
+experiment.components=components
+experiment.add_phase(phase1)
+experiment.add_phase(phase2)
+experiment.run()
+
+
+"""
 init_sys_params = SystemParameters()
 init_sys_params.inlet_concentration = 0.0
 init_sys_params.u = 0.00001  #m3/s
@@ -54,4 +80,4 @@ experiment.units = [column]
 experiment.add_timesection(TimeSection(system_parameters=apply, time=.1))
 experiment.add_timesection(TimeSection(system_parameters=elute, time=8))
 experiment.run()
-
+"""
