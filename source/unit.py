@@ -43,6 +43,12 @@ class Unit:
         # Concentrations at unit outlet
         self.c_out = np.zeros(len(self.components))
         
+    def set_init_concentrations (self, cl, cp, q):
+        
+        self.cl = np.zeros((len(self.components), self.ax_disc))
+        self.cp = np.zeros((len(self.components), self.ax_disc))
+        self.q = np.zeros((len(self.components), self.ax_disc))
+        
         
     def step (self, c0, f, dt):
         # Convert from volumetric flow to linear interstitial flow

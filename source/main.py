@@ -13,7 +13,6 @@ from helper import *
 from unit import Unit
 
 
-#salt = Salt(charge=1)
 salt = Component()
 protein1 = Component()
 protein2 = Component()
