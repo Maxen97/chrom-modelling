@@ -20,8 +20,10 @@ class Unit:
         self.ep = (self.et - self.ec) / (1 - self.ec)
         
         self.bc = self.ec / (1 - self.ec)
+        self.bp = self.ep / (1 - self.ep)
         
-        self.kf = 1e-8
+        
+        self.ic = 140
         
         self.components = components
         
@@ -33,10 +35,7 @@ class Unit:
         # Concentration of each component at each node
         self.cl = np.zeros((len(self.components), self.ax_disc))
         self.cp = np.zeros((len(self.components), self.ax_disc))
-        
-        # Concentration at nodes
-        #self.cl = np.zeros(self.ax_disc)
-        #self.cp = np.zeros(self.ax_disc)
+        self.q = np.zeros((len(self.components), self.ax_disc))
         
         # Concentrations at unit inlet
         self.c_in = np.zeros(len(self.components))
@@ -49,6 +48,7 @@ class Unit:
         # Convert from volumetric flow to linear interstitial flow
         u = f / (3.1415 * self.r**2 * self.ec)
         
+        # Update bulk concentrations
         for i in range(len(self.components)):
             self.c_in = c0
             
@@ -57,33 +57,23 @@ class Unit:
             self.cl[i, 1:-1] = self.cl[i, 1:-1] + \
                 (self.Dax * ((self.cl[i, 2:] - 2*self.cl[i, 1:-1] + self.cl[i, :-2]) / self.dz2)
                                   -  u * ((self.cl[i, 1:-1] - self.cl[i, :-2]) / self.dz) - \
-                    3 * self.kf / (self.bc * self.rp) * (self.cl[i, 1:-1] - self.cp[i, 1:-1])) * dt
+                    3 * self.components[i].kf / (self.bc * self.rp) * (self.cl[i, 1:-1] - self.cp[i, 1:-1])) * dt
                     
             self.cl[i, -1] = self.cl[i, -1] - (u * (self.cl[i, -1] - self.cl[i, -2]) / (self.dz * 0.5)) * dt
                    
             self.c_out[i] = self.cl[i, -1]
          
+        
+        # Update bead concentrations
         for i in range(len(self.components)):
-            self.cp[i][1:-1] = self.cp[i][1:-1] + \
-                (3 * self.kf / (self.ep * self.rp * 1) * (self.cl[i][1:-1] - self.cp[i][1:-1])) * dt
-        
-        """
-        self.c_in = c0
-        
-        # Left boundary condition
-        self.cl[0] = self.c_in + ((self.Dax / u) * (self.cl[1] - self.cl[0]) / (self.dz * 0.5)) * dt
-        
-        self.cl[1:-1] = self.cl[1:-1] + \
-            (self.Dax * ((self.cl[2:] - 2*self.cl[1:-1] + self.cl[:-2]) / self.dz2)
-                              -  u * ((self.cl[1:-1] - self.cl[:-2]) / self.dz) - \
-                3 * self.kf / (self.bc * self.rp) * (self.cl[1:-1] - self.cp[1:-1])) * dt
-        
-        # Right boundary condition
-        self.cl[-1] = self.cl[-1] - (u * (self.cl[-1] - self.cl[-2]) / (self.dz * 0.5)) * dt
-        
-        self.c_out = self.cl[-1]
+            self.cp[i][:] = self.cp[i][:] + \
+                (3 * self.components[i].kf / (self.ep * self.rp * 1) * (self.cl[i][:] - self.cp[i][:])) * dt
         
         
-        # Update cp
-        self.cp[1:-1] = self.cp[1:-1] + (3 * self.kf / (self.ep * self.rp * 1) * (self.cl[1:-1] - self.cp[1:-1])) * dt
-        """
+        # Update adsorption
+        sum_sigma = 0 # move inside loop
+        for i in range(len(self.components)):
+            pass
+            #sum_sigma = self.component
+        
+        #q0 = self.ic - sum()

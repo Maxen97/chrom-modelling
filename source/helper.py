@@ -15,7 +15,9 @@ class Component:
     def __init__ (self):
         self.mw = 10000
         self.ads = 1
-        self.kf = 1e-5
+        self.kf = 1e-8
+        self.v = 12
+        self.s = 4
         
         
 class Solution:
@@ -69,7 +71,7 @@ class Experiment:
         for unit in self.units:
             unit.step(c_previous, self.f, self.dt)
             c_previous = unit.c_out
-        #self.c_solve.append(self.units[0].cl[:,-1])
+            
         self.c_solve.append(list(self.units[0].c_out))
         
         self.t += self.dt
@@ -82,16 +84,8 @@ class Experiment:
         while self.t <= total_time:
             self.step()
             self.t_solve.append(self.t)
-            #self.c_solve.append(self.c[-1])
-        
-        #g = np.array(self.c_solve)
-        #print(self.c_solve)
         
         for i in range(len(self.components)):
             plt.plot(self.t_solve, [x[i] for x in self.c_solve])
             
-        #plt.plot(self.t_solve, [x[0] for x in self.c_solve])
-        
-        #plt.plot(self.t_solve, self.c_solve)
-        #plt.plot(self.t_solve, self.c_solve)
         plt.show()
