@@ -33,9 +33,9 @@ class Unit:
         self.dz2 = self.dz ** 2
         
         # Concentration of each component at each node
-        self.cl = np.zeros((len(self.components), self.ax_disc))
-        self.cp = np.zeros((len(self.components), self.ax_disc))
-        self.q = np.zeros((len(self.components), self.ax_disc))
+        self.cl = np.ones((len(self.components), self.ax_disc), dtype=np.longfloat)
+        self.cp = np.ones((len(self.components), self.ax_disc), dtype=np.longfloat)
+        self.q = np.ones((len(self.components), self.ax_disc), dtype=np.longfloat)
         
         # Concentrations at unit inlet
         self.c_in = np.zeros(len(self.components))
@@ -43,11 +43,12 @@ class Unit:
         # Concentrations at unit outlet
         self.c_out = np.zeros(len(self.components))
         
-    def set_init_concentrations (self, cl, cp, q):
+    def set_init_concentrations (self, c):
+        conc = np.array(c)
         
-        self.cl = np.zeros((len(self.components), self.ax_disc))
-        self.cp = np.zeros((len(self.components), self.ax_disc))
-        self.q = np.zeros((len(self.components), self.ax_disc))
+        self.cl *= conc[:, None]
+        self.cp *= conc[:, None]
+        self.q *=  conc[:, None]
         
         
     def step (self, c0, f, dt):
@@ -69,17 +70,33 @@ class Unit:
                    
             self.c_out[i] = self.cl[i, -1]
          
-        
+        """
         # Update bead concentrations
         for i in range(len(self.components)):
             self.cp[i][:] = self.cp[i][:] + \
                 (3 * self.components[i].kf / (self.ep * self.rp * 1) * (self.cl[i][:] - self.cp[i][:])) * dt
-        
+        """
         
         # Update adsorption
-        sum_sigma = 0 # move inside loop
-        for i in range(len(self.components)):
-            pass
+        
+        # Calculate number of bound counter-ions
+        q0 = self.ic - sum([self.components[i].v * self.q[i] for i in range(len(self.components[1:]))])
+        
+        # Calculate number of free binding sites
+        q0_hat = q0 - sum([self.components[i].s * self.q[i] for i in range(len(self.components[1:]))])
+        
+        qref = 1
+        cref = 1
+        
+        for i in range(len(self.components) - 1):
+            i =+ 1
+            
+            self.q[i, :] = self.q[i, :] + ((self.components[i].ka * self.cp[i, :] * (q0/qref)**self.components[i].v) - (self.components[i].kd * self.q[i, :] * (self.cp[0]/cref)**self.components[i].v)) * dt
             #sum_sigma = self.component
         
-        #q0 = self.ic - sum()
+        
+        # Update bead concentrations
+        for i in range(len(self.components)):
+            self.cp[i][:] = self.cp[i][:] + \
+                (3 * self.components[i].kf / (self.ep * self.rp * 1) * (self.cl[i][:] - self.cp[i][:]) * \
+                 (self.components[i].ka * self.cp[i, :] * (q0/qref)**self.components[i].v) - (self.components[i].kd * self.q[i, :] * (self.cp[0]/cref)**self.components[i].v)) * dt

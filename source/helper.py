@@ -16,8 +16,10 @@ class Component:
         self.mw = 10000
         self.ads = 1
         self.kf = 1e-8
-        self.v = 12
-        self.s = 4
+        self.ka = 1e-7
+        self.kd = 1e-4
+        self.v = 3
+        self.s = 11
         
         
 class Solution:
