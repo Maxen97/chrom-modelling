@@ -6,13 +6,14 @@ This is a simple chromatography sandbox simulator.
 
 Please be aware that development is ongoing.
 
-## Getting started
+## Usage
 
-### Usage
-1. Copy the "model" folder to your local drive
+### Getting started
+1. Copy the "models" folder a local repository.
+2. Import the "models" folder to your running script as seen in the example below.
 
 ### Example
-The following examples shows a standard pulse injection experiment.
+The following example shows a model of a standard pulse injection experiment.
 
 ```python
 import matplotlib.pyplot as plt
@@ -31,7 +32,7 @@ load = model.Solution(
 )
 eluent = model.Solution(
     components=[salt],
-    concentrations=[0]
+    concentrations=[0] # [M]
 )
 
 # Define model units (e.g., columns, tubings, tanks)
@@ -48,12 +49,12 @@ column = model.Unit(
 injection_phase = model.Phase(
     inlet_solution=load,
     flowrate=0.001, # [L/s]
-    v_end=0.01 # [L]
+    t=10 # [s]
 )
 elution_phase = model.Phase(
     inlet_solution=eluent,
-    flowrate=0.001,
-    v_end=0.1
+    flowrate=0.001, # [L/s]
+    t=500 # [s]
 )
 
 
@@ -64,5 +65,11 @@ experiment = model.Experiment(
     phases=[injection_phase, elution_phase]
 )
 
-experiment.run()
+result = model.solve(
+    experiments=[experiment],
+    dt=0.1 # [s]
+)
+
+fig = plt.plot(result.x, result.y)
+fig.show()
 ```

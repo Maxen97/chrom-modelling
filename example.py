@@ -14,7 +14,7 @@ load = model.Solution(
 )
 eluent = model.Solution(
     components=[salt],
-    concentrations=[0]
+    concentrations=[0] # [M]
 )
 
 # Define model units (e.g., columns, tubings, tanks)
@@ -31,12 +31,12 @@ column = model.Unit(
 injection_phase = model.Phase(
     inlet_solution=load,
     flowrate=0.001, # [L/s]
-    v_end=0.01 # [L]
+    t=10 # [s]
 )
 elution_phase = model.Phase(
     inlet_solution=eluent,
-    flowrate=0.001,
-    v_end=0.1
+    flowrate=0.001, # [L/s]
+    t=500 # [s]
 )
 
 
@@ -47,4 +47,10 @@ experiment = model.Experiment(
     phases=[injection_phase, elution_phase]
 )
 
-experiment.run()
+result = model.solve(
+    experiments=[experiment],
+    dt=0.1 # [s]
+)
+
+fig = plt.plot(result.x, result.y)
+fig.show()
