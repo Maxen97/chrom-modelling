@@ -12,6 +12,6 @@ Please be aware that development is ongoing.
 
 The following examples shows a standard pulse injection experiment.
 
-'''python
+```python
 import matplotlib.pyplot as plt
-'''
+```
