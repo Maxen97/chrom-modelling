@@ -3,54 +3,58 @@ from chrom_modelling import model
 
 # Define components (e.g., salts, biomolecules, additives)
 salt = model.Component(
-    type = "salt",
-
+    kf=1e-5 # Film diffusion coefficient [m/s]
 )
 
 # Define solutions (e.g., load solutions, buffers)
 load = model.Solution(
     components=[salt],
-    concentrations=[0.4] # [M]
+    concentrations=[0.5/1000] # [moles/m^3]
 )
 eluent = model.Solution(
     components=[salt],
-    concentrations=[0] # [M]
+    concentrations=[0.] # [moles/m^3]
 )
 
-# Define model units (e.g., columns, tubings, tanks)
-column = model.Unit(
-    type="LRMP", # e.g., Lumped-Rate Model with Pores
+# Define model unit operations (e.g., columns, tubings, tanks)
+column = model.LRMP(
     nz=50, # Axial discretization [-]
     lz=0.2, # Axial length [m]
-    lr=0.05, # Radial length [m]
+    lr=0.01, # Radial length [m]
+    et=0.85, # Total porosity [-]
+    ec=0.35, # Column porosity [-]
+    rp=20e-6, # Particle radius [m]
+    dax=1e-5, # Axial dispersion [m^2/s]
     components=[salt],
-    init_concentrations=[0.4] # [M]
+    initial_concentrations=[0.] # [M]
 )
 
 # Define experiment phases (e.g., loading phase, elution phase)
 injection_phase = model.Phase(
     inlet_solution=load,
-    flowrate=0.001, # [L/s]
+    flowrate=1e-6, # [m^3/s]
     t=10 # [s]
 )
 elution_phase = model.Phase(
     inlet_solution=eluent,
-    flowrate=0.001, # [L/s]
-    t=500 # [s]
+    flowrate=1e-6, # [m^3/s]
+    t=150 # [s]
 )
-
 
 # Create experiment
 experiment = model.Experiment(
     components=[salt],
     units=[column],
-    phases=[injection_phase, elution_phase]
+    phases=[injection_phase, elution_phase],
+    dt=0.01
 )
-
+"""
 result = model.solve(
     experiments=[experiment],
     dt=0.1 # [s]
 )
+"""
+experiment.run()
 
-fig = plt.plot(result.x, result.y)
-fig.show()
+#fig = plt.plot(result.x, result.y)
+#fig.show()
