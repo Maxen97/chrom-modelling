@@ -2,7 +2,7 @@
 
 ## About
 
-This is a simple chromatography sandbox simulator.
+`chrom-modelling` is a simple chromatography sandbox simulator.
 
 Please be aware that development is ongoing.
 
