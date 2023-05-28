@@ -1,32 +1,33 @@
 import matplotlib.pyplot as plt
 from chrom_modelling import model
+import chrom_modelling.model as mld
 
 # Define components (e.g., salts, biomolecules, additives)
 salt = model.Component(
-    kf=1e-5 # Film diffusion coefficient [m/s]
+    kf=1e-5     # Film diffusion coefficient [m/s]
 )
 
 # Define solutions (e.g., load solutions, buffers)
 load = model.Solution(
     components=[salt],
-    concentrations=[0.5/1000] # [moles/m^3]
+    concentrations=[0.0005] # [moles/m^3]
 )
 eluent = model.Solution(
     components=[salt],
-    concentrations=[0.] # [moles/m^3]
+    concentrations=[0.]     # [moles/m^3]
 )
 
 # Define model unit operations (e.g., columns, tubings, tanks)
 column = model.LRMP(
-    nz=50, # Axial discretization [-]
-    lz=0.2, # Axial length [m]
-    lr=0.01, # Radial length [m]
-    et=0.85, # Total porosity [-]
-    ec=0.35, # Column porosity [-]
-    rp=20e-6, # Particle radius [m]
-    dax=1e-5, # Axial dispersion [m^2/s]
+    nz=50,      # Axial discretization [-]
+    lz=0.2,     # Axial length [m]
+    lr=0.01,    # Radial length [m]
+    et=0.85,    # Total porosity [-]
+    ec=0.35,    # Column porosity [-]
+    rp=20e-6,   # Particle radius [m]
+    dax=1e-5,   # Axial dispersion [m^2/s]
     components=[salt],
-    initial_concentrations=[0.] # [M]
+    initial_concentrations=[0.] # [moles/m^3]
 )
 
 # Define experiment phases (e.g., loading phase, elution phase)
