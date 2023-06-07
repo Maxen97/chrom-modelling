@@ -1,4 +1,4 @@
-import chrom_modelling as model
+import chrom_modelling as model # Import main script
 
 # Define components (e.g., salts, biomolecules, additives)
 salt = model.Component(
