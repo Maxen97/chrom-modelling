@@ -1,75 +1,73 @@
-# Chromatography modeling
+# Chromatography modelling
 
 ## About
 
 `chrom-modelling` is a simple chromatography sandbox simulator.
+
+Compared to other chromatography simulation tools, `chrom-modelling` will have built in support for parameter sensitivity analysis and an intuitive UI for easier adoption of multiple unit operations within the process.
 
 Please be aware that development is ongoing.
 
 ## Usage
 
 ### Getting started
-1. Copy the "models" folder a local repository.
-2. Import the "models" folder to your running script as seen in the example below.
+1. Download and install `numpy` and `matplotlib`.
+2. Save the "chrom_modelling.py" script to a local repository.
+3. Import the "chrom_modeling.py" script to your running script as seen in the example below.
 
 ### Example
 The following example shows a model of a standard pulse injection experiment.
 
 ```python
-import matplotlib.pyplot as plt
-from chrom_modelling import model
+import chrom_modelling as model # Import main script
 
 # Define components (e.g., salts, biomolecules, additives)
 salt = model.Component(
-    type = "salt",
-
+    kf=1e-5     # Film diffusion coefficient [m/s]
 )
 
 # Define solutions (e.g., load solutions, buffers)
 load = model.Solution(
     components=[salt],
-    concentrations=[0.4] # [M]
+    concentrations=[0.0005] # [moles/m^3]
 )
 eluent = model.Solution(
     components=[salt],
-    concentrations=[0] # [M]
+    concentrations=[0.]     # [moles/m^3]
 )
 
-# Define model units (e.g., columns, tubings, tanks)
-column = model.Unit(
-    type="LRMP", # e.g., Lumped-Rate Model with Pores
-    nz=50, # Axial discretization [-]
-    lz=0.2, # Axial length [m]
-    lr=0.05, # Radial length [m]
+# Define model unit operations (e.g., columns, tubings, tanks)
+column = model.LRMP(
+    nz=50,      # Axial discretization [-]
+    lz=0.2,     # Axial length [m]
+    lr=0.01,    # Radial length [m]
+    et=0.85,    # Total porosity [-]
+    ec=0.35,    # Column porosity [-]
+    rp=20e-6,   # Particle radius [m]
+    dax=1e-5,   # Axial dispersion [m^2/s]
     components=[salt],
-    init_concentrations=[0.4] # [M]
+    initial_concentrations=[0.] # [moles/m^3]
 )
 
 # Define experiment phases (e.g., loading phase, elution phase)
 injection_phase = model.Phase(
     inlet_solution=load,
-    flowrate=0.001, # [L/s]
+    flowrate=1e-6, # [m^3/s]
     t=10 # [s]
 )
 elution_phase = model.Phase(
     inlet_solution=eluent,
-    flowrate=0.001, # [L/s]
-    t=500 # [s]
+    flowrate=1e-6, # [m^3/s]
+    t=150 # [s]
 )
-
 
 # Create experiment
 experiment = model.Experiment(
     components=[salt],
     units=[column],
-    phases=[injection_phase, elution_phase]
+    phases=[injection_phase, elution_phase],
+    dt=0.01 # Seconds between time-steps [s]
 )
 
-result = model.solve(
-    experiments=[experiment],
-    dt=0.1 # [s]
-)
-
-fig = plt.plot(result.x, result.y)
-fig.show()
+experiment.run()
 ```
