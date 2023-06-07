@@ -1,6 +1,4 @@
-import matplotlib.pyplot as plt
-from chrom_modelling import model
-import chrom_modelling.model as mld
+import chrom_modelling as model
 
 # Define components (e.g., salts, biomolecules, additives)
 salt = model.Component(
@@ -47,15 +45,7 @@ experiment = model.Experiment(
     components=[salt],
     units=[column],
     phases=[injection_phase, elution_phase],
-    dt=0.01
+    dt=0.01 # Seconds between time-steps [s]
 )
-"""
-result = model.solve(
-    experiments=[experiment],
-    dt=0.1 # [s]
-)
-"""
-experiment.run()
 
-#fig = plt.plot(result.x, result.y)
-#fig.show()
+experiment.run()
